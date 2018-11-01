@@ -266,13 +266,14 @@ void initPeerings (bool first) {
     }
     for ( uint8_t i = 1; i <= 8; ++i ) {
       Peer ipeer(devid, i);
-      sdev.remoteChannel(i+8).peer(ipeer);
+      sdev.remoteChannel(i + 8).peer(ipeer);
     }
   }
 }
 
 void setup () {
   DINIT(57600, ASKSIN_PLUS_PLUS_IDENTIFIER);
+  PCF8574Output<PCF8574_ADDRESS>::init();
   bool first = sdev.init(hal);
   sdev.switchChannel(1).init(RELAY_PIN_1, RELAY_ON_STATE_INVERT);
   sdev.switchChannel(2).init(RELAY_PIN_2, RELAY_ON_STATE_INVERT);
