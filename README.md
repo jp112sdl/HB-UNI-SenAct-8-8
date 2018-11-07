@@ -1,5 +1,5 @@
-# HB-UNI-SenAct-8-8-RC
-## Universal 8fach-Aktor und 8fach-Sender (Taster) für HomeMatic
+# HB-UNI-SenAct-8-8
+## Universal 8fach-Aktor und 8fach-Sender (Taster [-RC] oder Schließerkontakt [-SC]) für HomeMatic
 
 - Aufbau grundlegend wie [HB-UNI-SenAct-4-4](https://github.com/jp112sdl/HB-UNI-SenAct-4-4)
 - Ansteuerung der Ausgänge erfolgt jedoch über einen PCF8574 Port Expander
