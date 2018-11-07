@@ -12,7 +12,6 @@
 #include <EnableInterrupt.h>
 #include <AskSinPP.h>
 #include <LowPower.h>
-#include <MultiChannelDevice.h>
 #include <actors/PCF8574.h>
 #include <Switch.h>
 #include <ThreeState.h>
@@ -45,8 +44,9 @@
 #define CONFIG_BUTTON_PIN 8
 
 // number of available peers per channel
-#define PEERS_PER_SwitchChannel  6
-#define PEERS_PER_SENSCHANNEL    6
+//#define CREATE_INTERNAL_PEERINGS
+#define PEERS_PER_SwitchChannel  3
+#define PEERS_PER_SENSCHANNEL    3
 
 #ifdef USE_BATTERY_MODE
 #define battOp_ARGUMENT BatterySensor
@@ -179,6 +179,8 @@ class MixDevice : public ChannelDevice<Hal, VirtBaseChannel<Hal, SwList0>, 16, S
         case 8:
           return swChannel8;
           break;
+        default:
+          return swChannel1;
       }
     }
 
@@ -208,6 +210,8 @@ class MixDevice : public ChannelDevice<Hal, VirtBaseChannel<Hal, SwList0>, 16, S
         case 16:
           return sensChannel16;
           break;
+        default:
+          return sensChannel9;
       }
     }
 
@@ -230,26 +234,33 @@ ConfigButton<MixDevice> cfgBtn(sdev);
 void initPeerings (bool first) {
   // create internal peerings - CCU2 needs this
   if ( first == true ) {
+#ifdef CREATE_INTERNAL_PEERINGS    
     HMID devid;
     sdev.getDeviceID(devid);
-    for ( uint8_t i = 1; i <= 4; ++i ) {
-      Peer ipeer(devid, i);
-      sdev.channel(i).peer(ipeer);
+    for ( uint8_t i = 1; i <= 8; ++i ) {
+      Peer ipeer(devid, i + 8);
+      sdev.switchChannel(i).peer(ipeer);
     }
+    for ( uint8_t i = 1; i <= 8; ++i ) {
+      Peer ipeer(devid, i);
+      sdev.sensorChannel(i + 8).peer(ipeer);
+    }
+#endif    
   }
 }
 
 void setup () {
   DINIT(57600, ASKSIN_PLUS_PLUS_IDENTIFIER);
+  PCF8574Output<PCF8574_ADDRESS>::init();
   bool first = sdev.init(hal);
-  sdev.switchChannel(1).init(RELAY_PIN_1, false);
-  sdev.switchChannel(2).init(RELAY_PIN_2, false);
-  sdev.switchChannel(3).init(RELAY_PIN_3, false);
-  sdev.switchChannel(4).init(RELAY_PIN_4, false);
-  sdev.switchChannel(5).init(RELAY_PIN_5, false);
-  sdev.switchChannel(6).init(RELAY_PIN_6, false);
-  sdev.switchChannel(7).init(RELAY_PIN_7, false);
-  sdev.switchChannel(8).init(RELAY_PIN_8, false);
+  sdev.switchChannel(1).init(RELAY_PIN_1, RELAY_ON_STATE_INVERT);
+  sdev.switchChannel(2).init(RELAY_PIN_2, RELAY_ON_STATE_INVERT);
+  sdev.switchChannel(3).init(RELAY_PIN_3, RELAY_ON_STATE_INVERT);
+  sdev.switchChannel(4).init(RELAY_PIN_4, RELAY_ON_STATE_INVERT);
+  sdev.switchChannel(5).init(RELAY_PIN_5, RELAY_ON_STATE_INVERT);
+  sdev.switchChannel(6).init(RELAY_PIN_6, RELAY_ON_STATE_INVERT);
+  sdev.switchChannel(7).init(RELAY_PIN_7, RELAY_ON_STATE_INVERT);
+  sdev.switchChannel(8).init(RELAY_PIN_8, RELAY_ON_STATE_INVERT);
 
   const uint8_t posmap[4] = {Position::State::PosA, Position::State::PosB, Position::State::PosA, Position::State::PosB};
   sdev.sensorChannel(9).init(SENS_PIN_1, SENS_PIN_1, SABOTAGE_PIN_1, posmap);
