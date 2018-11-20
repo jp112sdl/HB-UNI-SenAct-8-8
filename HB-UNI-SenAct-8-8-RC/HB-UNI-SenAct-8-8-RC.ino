@@ -43,8 +43,8 @@
 #define CONFIG_BUTTON_PIN  8
 
 // number of available peers per channel
-#define PEERS_PER_SwitchChannel  8
-#define PEERS_PER_RemoteChannel  8
+#define PEERS_PER_SwitchChannel  3
+#define PEERS_PER_RemoteChannel  3
 
 #ifdef USE_BATTERY_MODE
 #define battOp_ARGUMENT BatterySensor
