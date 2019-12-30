@@ -15,7 +15,7 @@
 #include <LowPower.h>
 #include <actors/PCF8574.h>
 #include <Switch.h>
-#include <ThreeState.h>
+#include <ContactState.h>
 
 //#define USE_BATTERY_MODE       // bei Batteriebetrieb
 #define LOWBAT_VOLTAGE     22    // Batterie-Leermeldung bei Unterschreiten der Spannung von U * 10
@@ -108,7 +108,7 @@ class SensList1 : public RegList1<Reg1> {
 };
 
 typedef SwitchChannel<Hal, PEERS_PER_SwitchChannel, SwList0, PCF8574Output<PCF8574_ADDRESS>>  SwChannel;
-typedef ThreeStateChannel<Hal, SwList0, SensList1, DefList4, PEERS_PER_SENSCHANNEL> SensChannel;
+typedef TwoStateChannel<Hal, SwList0, SensList1, DefList4, PEERS_PER_SENSCHANNEL> SensChannel;
 
 class MixDevice : public ChannelDevice<Hal, VirtBaseChannel<Hal, SwList0>, 16, SwList0> {
     class CycleInfoAlarm : public Alarm {
@@ -260,15 +260,14 @@ void setup () {
   sdev.switchChannel(7).init(RELAY_PIN_7, RELAY_ON_STATE_INVERT);
   sdev.switchChannel(8).init(RELAY_PIN_8, RELAY_ON_STATE_INVERT);
 
-  const uint8_t posmap[4] = {Position::State::PosA, Position::State::PosB, Position::State::PosA, Position::State::PosB};
-  sdev.sensorChannel(9).init(SENS_PIN_1, SENS_PIN_1, SABOTAGE_PIN_1, posmap);
-  sdev.sensorChannel(10).init(SENS_PIN_2, SENS_PIN_2, SABOTAGE_PIN_1, posmap);
-  sdev.sensorChannel(11).init(SENS_PIN_3, SENS_PIN_3, SABOTAGE_PIN_1, posmap);
-  sdev.sensorChannel(12).init(SENS_PIN_4, SENS_PIN_4, SABOTAGE_PIN_1, posmap);
-  sdev.sensorChannel(13).init(SENS_PIN_5, SENS_PIN_5, SABOTAGE_PIN_1, posmap);
-  sdev.sensorChannel(14).init(SENS_PIN_6, SENS_PIN_6, SABOTAGE_PIN_1, posmap);
-  sdev.sensorChannel(15).init(SENS_PIN_7, SENS_PIN_7, SABOTAGE_PIN_1, posmap);
-  sdev.sensorChannel(16).init(SENS_PIN_8, SENS_PIN_8, SABOTAGE_PIN_1, posmap);
+  sdev.sensorChannel(9).init (SENS_PIN_1, SABOTAGE_PIN_1);
+  sdev.sensorChannel(10).init(SENS_PIN_2, SABOTAGE_PIN_1);
+  sdev.sensorChannel(11).init(SENS_PIN_3, SABOTAGE_PIN_1);
+  sdev.sensorChannel(12).init(SENS_PIN_4, SABOTAGE_PIN_1);
+  sdev.sensorChannel(13).init(SENS_PIN_5, SABOTAGE_PIN_1);
+  sdev.sensorChannel(14).init(SENS_PIN_6, SABOTAGE_PIN_1);
+  sdev.sensorChannel(15).init(SENS_PIN_7, SABOTAGE_PIN_1);
+  sdev.sensorChannel(16).init(SENS_PIN_8, SABOTAGE_PIN_1);
 
   buttonISR(cfgBtn, CONFIG_BUTTON_PIN);
 
